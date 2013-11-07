@@ -52,8 +52,11 @@ Here's the plan of attack:
 
  * **DONE** <del>Stub out VS solution and project</del>
 
- * Lex input stream into tokens (note that this _can't_ be line-by-line
-   because a quoted field can contain CR and LF)
+ * **DONE** <del>Lex input stream into tokens (note that this _can't_ be line-by-line
+   because a quoted field can contain CR and LF)</del>
+
+ * Find a way to see the values in the lexerToken discriminated union; they
+   don't seem to pretty-print the way that C# Enums do.
 
  * Parse token stream into rows and fields
 
