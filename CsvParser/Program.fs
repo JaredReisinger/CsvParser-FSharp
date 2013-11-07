@@ -11,6 +11,17 @@ type lexerToken =
     | DQUOTE
     | TEXTDATA of char
 
+// Unlike Enums which have an automatic ToString() return of their value,
+// discriminated unions in F# (which is what 'lexerTokens' is) do not
+// seem to.  We need to create a helper function if we want to display
+// token values for diagnostic purposes.
+let formatToken = function
+    | COMMA -> "COMMA"
+    | CR -> "CR"
+    | LF -> "LF"
+    | DQUOTE -> "DQUOTE"
+    | TEXTDATA(c) -> sprintf "TEXTDATA(%c)" c
+
 // tokenize: lexes a string into individual tokens.  Note that this is
 // a precursor to parsing, where quoting/escaping is handled.  The
 // tokenizer *only* maps characters to their lexerToken value, it does
@@ -29,15 +40,19 @@ let tokenize (source : string) =
         | '\r' :: tail -> innerTokenize (CR :: acc) tail
         | '\n' :: tail -> innerTokenize (LF :: acc) tail
         | '\"' :: tail -> innerTokenize (DQUOTE :: acc) tail
-        // TODO: The RFC says TEXTDATA are the characters: %x20-21 / %x23-2B / %x2D-7E
-        // using Char.IsLetterOrDigit() is just a quick hack to prevent accepting *any*
-        // character, so that the 'failwith' case can be hit.
-        | c :: tail when Char.IsLetterOrDigit(c) -> innerTokenize (TEXTDATA(c) :: acc) tail
+        // The RFC says TEXTDATA are the characters in the range 0x20-0x7E, except
+        // for 0x22 (DQUOTE) and 0x2C (COMMA).  This works out to ' ' <= c <= '~'
+        | c :: tail when ' ' <= c && c <= '~' -> innerTokenize (TEXTDATA(c) :: acc) tail
         | [] -> List.rev acc
-        | c :: tail -> failwith (sprintf "unknown input '%c'!" c)
+        | c :: tail -> failwith (sprintf "Invalid input character '%c' (0x%02x).  Only ASCII is supported." c (int c))
 
     // Turn the string into a list of characters so that we can lex it using
     // 'innerTokenize'...
+    // Note: The RFC says that "Common usage of CSV is US-ASCII" but allows for
+    // other character sets.  Yet the definition of TEXTDATA restricts values
+    // into a 7-bit range.  We're going to simply ignore the issue of larger
+    // Unicode code points and assume that each char in the string stands for
+    // an entire character.
     let chars = Array.toList (source.ToCharArray())
 
     // Tokenize the characters, seeding the accumulator 'acc' with an empty list.
@@ -51,6 +66,8 @@ let main argv =
 
     // The source CSV we're attempting to parse...
     let source = "foo,bar\r\n\"simple\",\"with,comma\""
+    // Some invalid characters, just to test...
+    ////let source = "abc\bdef"
 
     printfn "Parsing source..."
     printfn "--------------------"
@@ -60,7 +77,7 @@ let main argv =
 
     printfn "Tokens..."
     printfn "--------------------"
-    List.iter (fun t -> printfn "  %O" t) tokens
+    List.iter (fun t -> formatToken t |> printfn "  %s") tokens
     printfn "--------------------"
 
     // The ReadKey pauses the output window when we're running under VS's debugger.
