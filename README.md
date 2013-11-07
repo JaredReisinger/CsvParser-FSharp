@@ -50,15 +50,18 @@ have been made that _are not_ what one would likely do for a "real" parser:
 
 Here's the plan of attack:
 
- * **DONE** <del>Stub out VS solution and project</del>
+ * **DONE** <del>Stub out VS solution and project.</del>
 
- * **DONE** <del>Lex input stream into tokens (note that this _can't_ be line-by-line
-   because a quoted field can contain CR and LF)</del>
+ * **DONE** <del>Lex input stream into tokens (note that this _can't_ be
+   line-by-line because a quoted field can contain `CR` and `LF`).</del>
 
- * Find a way to see the values in the lexerToken discriminated union; they
-   don't seem to pretty-print the way that C# Enums do.
+ * **DONE** <del>Find a way to see the values in the lexerToken discriminated
+   union; they don't seem to pretty-print the way that C# Enums do.</del>
 
- * Parse token stream into rows and fields
+ * **IN PROGRESS** Parse token stream into rows and fields.
+   <em>The parser currently creates "unescaped fields" and "escaped (quoted)
+   fields", both of which have a string value, and a "newline" marker.
+   These have not yet been flattened into a simple `string[][]`</em>
 
  * Create unit tests to cover CSV's edge cases.  (Ideally this could be done
    as or before the F# work happens, but will more likely be just after.)
