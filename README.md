@@ -9,8 +9,10 @@ This project is a learning exercise, with the following goals:
  * Write an RFC 4180-compliant CSV (comma-separated values) parser (in F#, of
    course)
 
- * Learn how to structure unit tests for an F# project (the tests may or may
-   not be written in F#, depending on how amenable VS is to that)
+ * Learn how to structure unit tests for an F# project <del>(the tests may
+   or may not be written in F#, depending on how amenable VS is to that)</del>
+   _It turns out that writing the unit tests in F# isn't hard at all!  See
+   the [F# and Unit testing](#FSharpUnitTesting) section to find out more._
 
 Coming from a C/C++/C# background, learning to think in a "functional" way
 takes time and practice.  There are a bunch of resources out there that try
@@ -46,7 +48,7 @@ have been made that _are not_ what one would likely do for a "real" parser:
    developer and see something amiss, please feel free to let me know, and
    I'll either fix it or add it to this list!)
 
-### TODO
+### TO-DO
 
 Here's the plan of attack:
 
@@ -63,5 +65,25 @@ Here's the plan of attack:
    fields", both of which have a string value, and a "newline" marker.
    These have not yet been flattened into a simple `string[][]`</em>
 
- * Create unit tests to cover CSV's edge cases.  (Ideally this could be done
-   as or before the F# work happens, but will more likely be just after.)
+ * **IN PROGRESS** Create unit tests to cover CSV's edge cases.  (Ideally
+   this could be done as or before the F# work happens, but will more likely
+   be just after.)
+
+--------------------------------------------------
+
+## Other Notes
+
+### <span id="FSharpUnitTesting">F# and Unit testing<span>
+
+A lot of the online references that can be found for
+writing unit tests in F# seem to be out-of-date.  In Visual Studio 2012 (v11),
+you can simply create an F# library, add a reference to
+"Microsoft.VisualStudio.QualityTools.UnitTestFramework" (and to the assembly
+you want to test), and start writing tests.  The built-in test handlers
+seem to detect and run the tests just fine (using 'Test'->'Run'->... from the
+menu).
+
+Do note that you'll need to make sure that the code you're testing in in a
+namespace/module so that you can find the types/classes you've written.  In
+the case of CsvParser, it was as easy as adding the `module CsvParser` to the
+top of the non-test source file.

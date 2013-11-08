@@ -1,4 +1,6 @@
-﻿open System
+﻿module CsvParser
+
+open System
 
 // See http://www.ietf.org/rfc/rfc4180.txt for the RFC on the CSV format
 
@@ -58,6 +60,8 @@ let tokenize (source : string) =
     // Tokenize the characters, seeding the accumulator 'acc' with an empty list.
     innerTokenize [] chars
 
+// We don't *really* need to distinguish between unescaped and escaped fields, but
+// doing so prevents us from losing information about the original source.
 type parserToken =
     | Unescaped of string
     | Escaped of string
