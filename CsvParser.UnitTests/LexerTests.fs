@@ -2,14 +2,14 @@
 
 open System
 open Microsoft.VisualStudio.TestTools.UnitTesting
-open CsvParser
+open CsvParser.Lexer
 
 [<TestClass>]
 type LexerTests() = 
 
     // helper function to make writing the unit tests easier
     let testLexer source expected =
-        let actual = tokenize source
+        let actual = lex source
         Assert.AreEqual(expected, actual)
 
     [<TestMethod>]
@@ -31,3 +31,14 @@ type LexerTests() =
             TEXTDATA('e') ::
             TEXTDATA('f') ::
             [])
+
+    [<TestMethod>]
+    [<ExpectedException(typeof<System.Exception>)>]
+    member this.UnknownCharactersWillThrow() =
+        testLexer "a\bc" []
+
+    // Since the lexer doesn't attempt to have any deep understanding about
+    // the tokens (it neither knows nor cares that "a quoted string means
+    // that the field may contain commas, quotes, CRs, or LFs"), there aren't
+    // a lot of tests that we need here.  The parser, on the other hand, will
+    // be much more involved.

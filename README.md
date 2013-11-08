@@ -82,8 +82,3 @@ you can simply create an F# library, add a reference to
 you want to test), and start writing tests.  The built-in test handlers
 seem to detect and run the tests just fine (using 'Test'->'Run'->... from the
 menu).
-
-Do note that you'll need to make sure that the code you're testing in in a
-namespace/module so that you can find the types/classes you've written.  In
-the case of CsvParser, it was as easy as adding the `module CsvParser` to the
-top of the non-test source file.
