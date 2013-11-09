@@ -1,4 +1,4 @@
-﻿module CsvParser.UnitTests
+﻿namespace CsvParser.UnitTests
 
 open System
 open Microsoft.VisualStudio.TestTools.UnitTesting
@@ -13,7 +13,7 @@ type LexerTests() =
         Assert.AreEqual(expected, actual)
 
     [<TestMethod>]
-    member this.BasicTokensCanLex() =
+    member this.Lexer_BasicTokensCanLex() =
         testLexer "x" (TEXTDATA('x') :: [])
         testLexer "," (COMMA :: [])
         testLexer "\r" (CR :: [])
@@ -21,7 +21,7 @@ type LexerTests() =
         testLexer "\"" (DQUOTE :: [])
 
     [<TestMethod>]
-    member this.TwoFields() =
+    member this.Lexer_TwoFields() =
         testLexer "abc,def" (
             TEXTDATA('a') ::
             TEXTDATA('b') ::
@@ -34,7 +34,7 @@ type LexerTests() =
 
     [<TestMethod>]
     [<ExpectedException(typeof<System.Exception>)>]
-    member this.UnknownCharactersWillThrow() =
+    member this.Lexer_UnknownCharactersWillThrow() =
         testLexer "a\bc" []
 
     // Since the lexer doesn't attempt to have any deep understanding about

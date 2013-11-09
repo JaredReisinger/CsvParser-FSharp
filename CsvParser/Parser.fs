@@ -37,14 +37,23 @@ let parse tokens =
         | DQUOTE :: tail -> acc, tail // a single double-quote terminates the escaped text
         | [] -> acc, []
 
-    // Properly handlng commas is tricky, as they can *imply* a field
-    // without any intervening text.  We handle this by explicitly looking
-    // at the token after the COMMA, and lumping it together with the non-
-    // comma case (these are the nth and first field patterns, respectively).
-    // If we haven't matched yet, but see we have a comma (*without* a
-    // following DQUOTE or TEXTDATA) it's the COMMA preceeding an empty
-    // field.  This works even for the last field on a line.
-    let rec innerParse acc = function
+    // Properly handling commas is tricky, as they can imply a field without
+    // any intervening text, not only in the middle of a line, but also as the
+    // first or last token (field).  Because of the recursive nature of our
+    // parsing, it's not obvious when we see a comma if it's the same comma
+    // that ended a previous field, or if it's a comma at the beginning of a
+    // new line.  Rather than trying to track this "beginning of line" state
+    // explicitly, we use two parsing helpers.  The "beginning of line" helper
+    // *only* deals with a single leading comma, and delegates everything else
+    // to the main helper.  The main helper can then assume that a comma
+    // implies the *next* field, whether there's any content for it or not.
+    let rec innerParseStart acc = function
+        | COMMA :: tail -> innerParse (Unescaped("") :: acc) (COMMA :: tail)
+        | anythingElse -> innerParse acc anythingElse
+
+    // The "and" introduces a mutually recursive function, so that they
+    // can call each other.
+    and innerParse acc = function
         | COMMA :: DQUOTE :: tail       // start of escaped field
         | DQUOTE :: tail ->             // start of escaped field
             let s, rem = getEscapedText "" tail
@@ -54,11 +63,9 @@ let parse tokens =
             let s, rem = getUnescapedText (c.ToString()) tail
             innerParse (Unescaped(s) :: acc) rem
         | COMMA :: tail -> innerParse (Unescaped("") :: acc) tail
-        | CR :: LF :: tail -> innerParse (NewLine :: acc) tail
+        | CR :: LF :: tail -> innerParseStart (NewLine :: acc) tail
         | [] -> List.rev acc
         | token :: tail -> failwith (sprintf "Unexpected token '%s'" (Lexer.format token))
 
     // Start the parsing!
-    innerParse [] tokens
-
-
+    innerParseStart [] tokens

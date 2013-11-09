@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LexerTests.fs" />
+    <Compile Include="ParserTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CsvParser\CsvParser.fsproj">

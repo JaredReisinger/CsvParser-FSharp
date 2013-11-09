@@ -15,7 +15,14 @@ let main argv =
     ////printfn "%A" argv
 
     // The source CSV we're attempting to parse...
-    let source = "foo,bar\r\n\"simple\",\"with,comma\"\r\n\"with\rCR\nLF\",\"with\"\"quote\""
+    //let source = "foo,bar\r\n\"simple\",\"with,comma\"\r\n\"with\rCR\nLF\",\"with\"\"quote\""
+    let source = "field1,field2,field3\r\n" +
+                    "\"aaa\r\n\",\"bb,b\",\"ccc\"\r\n" + 
+                    "\"in \"\"quotes\"\"\",2,3\r\n" + 
+                    "1,2,\r\n" + 
+                    "zzz,yyy,xxx\r\n" + 
+                    "1,,3\r\n" + 
+                    ",,"
 
     printfn "Source..."
     printfn "--------------------"
