@@ -3,6 +3,7 @@
 open System
 open Lexer
 open Parser
+open Restructurer
 
 // See http://www.ietf.org/rfc/rfc4180.txt for the RFC on the CSV format
 
@@ -39,6 +40,21 @@ let main argv =
     printfn "--------------------"
     let parserTokens = parse lexerTokens
     printListItems Parser.format parserTokens
+    printfn "--------------------"
+
+    printfn "Restructured (list of list of strings)..."
+    printfn "--------------------"
+    let listOfLists = restructure parserTokens
+    printfn "%A" listOfLists
+    printfn "--------------------"
+
+    printfn "Arrayified (array of array of strings)..."
+    printfn "--------------------"
+    // Converting from list-of-lists to array-of-arrays doesn't warrant a
+    // separate module... we'll just do it inline.
+    let listOfArrays = List.map (fun l -> List.toArray l) listOfLists
+    let arrayOfArrays = List.toArray listOfArrays
+    printfn "%A" arrayOfArrays
     printfn "--------------------"
 
     // The ReadKey pauses the output window when we're running under VS's debugger.

@@ -60,14 +60,14 @@ Here's the plan of attack:
  * **DONE** <del>Find a way to see the values in the lexerToken discriminated
    union; they don't seem to pretty-print the way that C# Enums do.</del>
 
- * **IN PROGRESS** Parse token stream into rows and fields.
+ * **DONE** <del>Parse token stream into rows and fields.
    <em>The parser currently creates "unescaped fields" and "escaped (quoted)
    fields", both of which have a string value, and a "newline" marker.
-   These have not yet been flattened into a simple `string[][]`</em>
+   These have not yet been flattened into a simple `string[][]`</em></del>
 
- * **IN PROGRESS** Create unit tests to cover CSV's edge cases.  (Ideally
+ * **DONE** <del>Create unit tests to cover CSV's edge cases.  (Ideally
    this could be done as or before the F# work happens, but will more likely
-   be just after.)
+   be just after.)</del>
 
 --------------------------------------------------
 
